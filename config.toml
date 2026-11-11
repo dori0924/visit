@@ -1,0 +1,18 @@
+# PRD 8.4 파랑 계열 테마. 세부 스타일(배너·카드·버튼)은 ui.py에 모여 있다.
+[theme]
+base = "light"
+primaryColor = "#1E63D6"              # 버튼·강조 (선명한 파랑)
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#EEF4FD"  # 카드·사이드바·입력칸 (연한 하늘색)
+textColor = "#1A2B4A"                 # 본문 (짙은 남색)
+baseRadius = "0.75rem"
+baseFontSize = 16
+# 한글 글꼴 Pretendard. CDN을 못 받으면 기기 기본 글꼴(맑은 고딕, Apple SD 고딕 등)로 대신한다.
+font = "Pretendard:https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css, sans-serif"
+
+[client]
+toolbarMode = "viewer"   # 방문자에게 개발자 메뉴를 보여주지 않는다
+showErrorDetails = "none"
+
+[server]
+maxUploadSize = 2  # MB, 로고 업로드 제한 (FR-7.5)
