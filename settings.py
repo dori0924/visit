@@ -1,4 +1,4 @@
-"""관리자가 수정하는 앱 설정(안내문, 서약서 본문, 안전교육 URL, 로고)의 읽기·저장.
+"""관리자가 수정하는 앱 설정(안내문, 서약서 본문, 안전교육 학습 내용·시험 문제, 로고)의 읽기·저장.
 
 저장소에 값이 없으면 content/ 폴더의 기본 문구를 쓴다.
 저장소를 읽지 못하면(네트워크 오류 등) 방문자 화면이 멈추지 않도록 기본값으로 대신한다.
@@ -24,17 +24,13 @@ DEFAULT_FILES = {
     "notice_en": "notice_en.md",
     "pledge_ko": "pledge_ko.md",
     "pledge_en": "pledge_en.md",
+    "safety_ko": "safety_ko.md",
+    "safety_en": "safety_en.md",
+    "quiz_ko": "quiz_ko.md",
+    "quiz_en": "quiz_en.md",
 }
 TEXT_KEYS = list(DEFAULT_FILES)
-URL_KEYS = ["safety_url_ko", "safety_url_en"]
-# 안전교육 기본 주소. 관리자 모드에서 바꾸면 그 값이 우선하고, 되돌리면 이 주소로 돌아온다.
-# 영문 주소가 비어 있으면 한글 주소를 쓴다(safety_url 참고).
-DEFAULT_VALUES = {
-    "safety_url_ko": "https://visit.hyundai-steel.com/reserve/index.do",
-}
 MAX_TEXT_LEN = 20_000
-
-URL_RE = re.compile(r"^https?://[^\s<>\"']+$", re.IGNORECASE)
 
 # 로고: Google Sheets 셀 하나는 5만 자까지라 base64를 나눠 저장한다.
 LOGO_MAX_UPLOAD = 2 * 1024 * 1024
@@ -47,12 +43,12 @@ class LogoError(ValueError):
     """로고 파일이 올바르지 않음. args[0]은 i18n 키."""
 
 
-# ── 텍스트·URL 설정 ─────────────────────────────────────────
+# ── 텍스트 설정 ─────────────────────────────────────────────
 def default(key: str) -> str:
     """설정 키의 기본값을 돌려준다."""
     filename = DEFAULT_FILES.get(key)
     if not filename:
-        return DEFAULT_VALUES.get(key, "")
+        return ""
     return (CONTENT_DIR / filename).read_text(encoding="utf-8")
 
 
@@ -92,21 +88,8 @@ def reset(key: str) -> None:
 
 
 def localized(kind: str, lang: str) -> str:
-    """kind(notice/pledge/safety_url)의 해당 언어 값을 돌려준다."""
+    """kind(notice/pledge/safety/quiz)의 해당 언어 값을 돌려준다."""
     return get(f"{kind}_{lang}")
-
-
-def safety_url(lang: str) -> str:
-    """안전교육 URL. 영문 URL이 비어 있으면 한글 URL을 쓴다 (FR-5.2)."""
-    url = get(f"safety_url_{lang}")
-    if not url and lang != "ko":
-        url = get("safety_url_ko")
-    return url
-
-
-def is_valid_url(url: str) -> bool:
-    """http:// 또는 https://로 시작하는 공백 없는 주소인지 확인한다."""
-    return bool(URL_RE.match(url))
 
 
 def updated_at() -> str | None:

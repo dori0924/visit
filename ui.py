@@ -2,6 +2,7 @@
 
 CSS는 이 파일에만 둔다. 특정 영역은 st.container(key="...")가 붙여 주는
 .st-key-<key> 클래스로 꾸민다(카드: notice_*, cat_card_*, pledge_text, done_card).
+안전관리 필증은 st.html로 그리는 .vg-cert 카드다.
 """
 
 from __future__ import annotations
@@ -128,6 +129,25 @@ header[data-testid="stHeader"] :is(button, a, [role="button"]) * {{ pointer-even
 }}
 .vg-done-title {{ font-size: 1.45rem; font-weight: 700; color: {NAVY}; margin: 0 0 8px; }}
 
+/* ── 안전관리 필증 ── */
+.vg-cert {{
+  border: 3px solid {BLUE}; border-radius: 18px; background: #fff; overflow: hidden;
+  box-shadow: 0 10px 24px rgba(30, 99, 214, .14);
+}}
+.vg-cert-title {{
+  margin: 0; padding: 18px 16px; text-align: center; color: #fff; font-size: 1.6rem;
+  font-weight: 800; letter-spacing: .12em; background: linear-gradient(135deg, {BLUE}, {BLUE_LIGHT});
+}}
+.vg-cert dl {{ margin: 0; padding: 8px 20px; }}
+.vg-cert dl > div {{ display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid #DCE6F5; }}
+.vg-cert dl > div:last-child {{ border-bottom: none; }}
+.vg-cert dt {{ flex: 0 0 5.5em; color: #51627F; font-weight: 600; }}
+.vg-cert dd {{ margin: 0; flex: 1; color: {NAVY}; font-size: 1.2rem; font-weight: 700; overflow-wrap: anywhere; }}
+.vg-cert-foot {{
+  margin: 0; padding: 14px 16px; text-align: center; background: #FFF4D6; color: #7A4B00;
+  font-weight: 700; line-height: 1.5; word-break: keep-all;
+}}
+
 /* ── 관리자 지표 카드 ── */
 [data-testid="stMetric"] {{ background: {SKY}; border-radius: 16px; padding: 14px 16px; }}
 
@@ -214,3 +234,18 @@ def done_card(title: str, body: str) -> None:
             f'<p class="vg-done-title" role="status">{html.escape(title)}</p>'
         )
         st.markdown(body)
+
+
+def certificate(title: str, rows: list[tuple[str, str]], footer: str) -> None:
+    """안전관리 필증 카드. 방문자가 입력한 값이 들어가므로 모든 문자열을 escape한다."""
+    items = "".join(
+        f"<div><dt>{html.escape(label)}</dt><dd>{html.escape(value)}</dd></div>"
+        for label, value in rows
+    )
+    st.html(
+        '<section class="vg-cert" aria-label="certificate">'
+        f'<p class="vg-cert-title" role="heading" aria-level="2">{html.escape(title)}</p>'
+        f"<dl>{items}</dl>"
+        f'<p class="vg-cert-foot">{html.escape(footer)}</p>'
+        "</section>"
+    )
