@@ -9,6 +9,10 @@ from i18n import t
 
 PAGES = ("home", "pledge", "safety", "admin")
 
+# 화면끼리 주고받는 세션 값 (URL에는 남기지 않는다)
+VISITOR_KEY = "visitor_info"        # 마지막으로 제출한 서약서의 {"name", "phone"} — 안전관리 필증용
+PASSED_KEY = "safety_passed_on"     # 안전교육 시험을 통과한 날짜(KST, YYYY-MM-DD)
+
 
 def go(page: str) -> None:
     """현재 화면을 바꾼다. 버튼의 on_click 콜백으로 쓴다."""

@@ -20,11 +20,6 @@ def render() -> None:
                   args=("pledge",), width="stretch")
         st.caption(t("cat_pledge_desc"))
     with col2, st.container(key="cat_card_safety"):
-        # URL이 있으면 한 번에 안전교육 새 창을 연다(FR-5.1). 없으면 '준비 중' 화면으로 보낸다.
-        url = settings.safety_url(lang)
-        if url:
-            st.link_button(t("cat_safety"), url, width="stretch")
-        else:
-            st.button(t("cat_safety"), key="cat_safety", on_click=go, args=("safety",),
-                      width="stretch")
+        st.button(t("cat_safety"), key="cat_safety", on_click=go, args=("safety",),
+                  width="stretch")
         st.caption(t("cat_safety_desc"))

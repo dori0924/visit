@@ -19,7 +19,7 @@ import streamlit as st
 import settings
 import ui
 from i18n import COUNTRIES, PURPOSES, get_lang, t
-from pages_impl import go, home_button
+from pages_impl import PASSED_KEY, VISITOR_KEY, go, home_button
 from storage import StorageError, get_storage, now_kst
 
 FIELD_KEYS = (
@@ -107,6 +107,8 @@ def _submit() -> None:
         return
     ss["pf_errors"] = {}
     ss["pf_done_at"] = record["submitted_at"]
+    # 안전관리 필증(FR-5.7)에 쓴다. 세션에만 두고 URL에는 남기지 않는다.
+    ss[VISITOR_KEY] = {"name": record["name"], "phone": record["phone"]}
     for k in list(ss.keys()):
         if k in FIELD_KEYS or k.startswith(tuple(f"{c}__" for c in CHOICE_DEFAULTS)):
             del ss[k]
@@ -148,6 +150,12 @@ def _go_home_and_reset() -> None:
     go("home")
 
 
+def _go_safety() -> None:
+    """완료 화면을 닫고 안전교육(필증) 화면으로 간다."""
+    _new_pledge()
+    go("safety")
+
+
 def _err(field: str) -> None:
     """필드 바로 아래에 오류를 표시한다."""
     key = st.session_state.get("pf_errors", {}).get(field)
@@ -163,6 +171,10 @@ def render_done() -> None:
     col1.button(t("home"), key="done_home", on_click=_go_home_and_reset,
                 width="stretch")
     col2.button(t("done_new"), key="done_new", on_click=_new_pledge, width="stretch")
+    if st.session_state.get(PASSED_KEY):
+        # 안전교육을 먼저 통과한 방문자는 여기서 바로 필증을 볼 수 있다.
+        st.button(t("cert_view"), key="done_cert", type="primary", on_click=_go_safety,
+                  width="stretch")
 
 
 def render() -> None:
